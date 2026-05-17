@@ -118,7 +118,7 @@ class ScheduledLaunchCoordinator(
             if (request.forceStart) {
                 triggerLogger.append("强制启动: 停止当前运行任务")
                 compositionService.stop()
-                compositionService.stopVirtualDisplay()
+                compositionService.stopGameAndCleanup(chainState.getClientTypeOrNull())
             } else {
                 reject(request, ExecutionResult.SKIPPED_BUSY, "有任务正在运行")
                 return

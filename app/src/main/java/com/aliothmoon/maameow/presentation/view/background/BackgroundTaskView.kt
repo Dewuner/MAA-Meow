@@ -576,7 +576,9 @@ fun BackgroundTaskView(
                     if (maaState == MaaExecutionState.RUNNING) {
                         showCloseConfirm = true
                     } else {
-                        coroutineScope.launch { compositionService.stopVirtualDisplay() }
+                        coroutineScope.launch {
+                            compositionService.stopGameAndCleanup(viewModel.chainState.getClientTypeOrNull())
+                        }
                     }
                 },
             )
@@ -717,7 +719,9 @@ fun BackgroundTaskView(
                 onDismissRequest = { showCloseConfirm = false },
                 onConfirm = {
                     showCloseConfirm = false
-                    coroutineScope.launch { compositionService.stopVirtualDisplay() }
+                    coroutineScope.launch {
+                        compositionService.stopGameAndCleanup(viewModel.chainState.getClientTypeOrNull())
+                    }
                 },
                 confirmText = stringResource(R.string.dialog_close_app_confirm),
                 dismissText = stringResource(R.string.common_cancel),

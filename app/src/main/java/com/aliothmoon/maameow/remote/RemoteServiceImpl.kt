@@ -10,12 +10,12 @@ import com.aliothmoon.maameow.constant.DefaultDisplayConfig
 import com.aliothmoon.maameow.constant.DisplayMode
 import com.aliothmoon.maameow.maa.InputControlUtils
 import android.content.Intent
-import com.aliothmoon.maameow.constant.Packages
 import com.aliothmoon.maameow.remote.internal.ActivityUtils
 import com.aliothmoon.maameow.remote.internal.AppOpsHelper
 import com.aliothmoon.maameow.remote.internal.PermissionGrantHelper
 import com.aliothmoon.maameow.remote.internal.PowerController
 import com.aliothmoon.maameow.remote.internal.PrimaryDisplayManager
+import com.aliothmoon.maameow.remote.internal.RemoteUtils
 import com.aliothmoon.maameow.remote.internal.ScreenManager
 import com.aliothmoon.maameow.remote.internal.VirtualDisplayManager
 import com.aliothmoon.maameow.third.FakeContext
@@ -41,6 +41,8 @@ class RemoteServiceImpl : RemoteService.Stub() {
                 restoreTrackedAudioPackages()
                 PowerController.destroy()
                 ScreenManager.destroy()
+                VirtualDisplayManager.release()
+                PrimaryDisplayManager.stop()
                 MaaCoreManager.destroy()
             }.onFailure {
                 Ln.e("$TAG: Emergency cleanup failed: ${it.message}")
@@ -214,16 +216,27 @@ class RemoteServiceImpl : RemoteService.Stub() {
         }
     }
 
-    override fun stopVirtualDisplay() {
-        Ln.i("$TAG: stopVirtualDisplay() ${virtualDisplayMode.get()}")
+    override fun stopGameAndCleanup(packageName: String?) {
+        Ln.i("$TAG: stopGameAndCleanup($packageName) ${virtualDisplayMode.get()}")
         when (virtualDisplayMode.get()) {
-            DisplayMode.PRIMARY -> PrimaryDisplayManager.stop()
+            DisplayMode.PRIMARY -> {
+                PrimaryDisplayManager.stop()
+            }
+
             DisplayMode.BACKGROUND -> {
                 PowerController.stopUserActivityKeepAlive()
-                VirtualDisplayManager.stop()
             }
         }
+        if (!packageName.isNullOrBlank()) {
+            forceStopPackage(packageName)
+        }
         restoreTrackedAudioPackages()
+    }
+
+    private fun forceStopPackage(packageName: String) {
+        runCatching {
+            RemoteUtils.shellExec("am force-stop '$packageName'")
+        }.onFailure { Ln.w("$TAG: am force-stop $packageName threw", it) }
     }
 
     override fun setPlayAudioOpAllowed(packageName: String?, isAllowed: Boolean) {
@@ -285,7 +298,7 @@ class RemoteServiceImpl : RemoteService.Stub() {
     override fun setVirtualDisplayMode(mode: Int): Boolean {
         when (mode) {
             DisplayMode.PRIMARY -> {
-                VirtualDisplayManager.stop()
+                VirtualDisplayManager.release()
                 virtualDisplayMode.set(mode)
                 return true
             }
