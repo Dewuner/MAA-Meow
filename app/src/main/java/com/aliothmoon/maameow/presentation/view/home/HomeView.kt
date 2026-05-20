@@ -280,6 +280,7 @@ fun HomeView(
                 item {
                     PermissionCard(
                         permissionState = permissionState,
+                        isShowAccessibility = uiState.runMode == RunMode.FOREGROUND && uiState.overlayControlMode == OverlayControlMode.ACCESSIBILITY,
                         isGranting = uiState.isGranting,
                         onRequestRemoteAccess = { viewModel.onRequestRemoteAccess(context) },
                         onRequestOverlay = { viewModel.onRequestOverlay(context) },
@@ -666,6 +667,7 @@ private fun PermissionRow(
 @Composable
 private fun PermissionCard(
     permissionState: PermissionState,
+    isShowAccessibility: Boolean,
     isGranting: Boolean,
     onRequestRemoteAccess: () -> Unit,
     onRequestOverlay: () -> Unit,
@@ -753,16 +755,18 @@ private fun PermissionCard(
                         grantedText = stringResource(R.string.home_permission_battery_added),
                         contentColor = contentColor
                     )
-                    PermissionRow(
-                        title = stringResource(R.string.home_permission_accessibility),
-                        granted = permissionState.accessibility,
-                        onClick = onRequestAccessibility,
-                        ungrantedText = if (permissionState.remoteAccessGranted)
-                            stringResource(R.string.home_permission_quick_grant)
-                        else
-                            stringResource(R.string.home_permission_request),
-                        contentColor = contentColor
-                    )
+                    if (isShowAccessibility) {
+                        PermissionRow(
+                            title = stringResource(R.string.home_permission_accessibility),
+                            granted = permissionState.accessibility,
+                            onClick = onRequestAccessibility,
+                            ungrantedText = if (permissionState.remoteAccessGranted)
+                                stringResource(R.string.home_permission_quick_grant)
+                            else
+                                stringResource(R.string.home_permission_request),
+                            contentColor = contentColor
+                        )
+                    }
                     PermissionRow(
                         title = stringResource(R.string.home_permission_notification),
                         granted = permissionState.notification,
