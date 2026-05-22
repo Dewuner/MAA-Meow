@@ -1,5 +1,6 @@
 package com.aliothmoon.maameow.remote.internal
 
+import android.annotation.SuppressLint
 import android.app.ActivityManager
 import android.app.ActivityOptions
 import android.content.Intent
@@ -8,7 +9,20 @@ import com.aliothmoon.maameow.third.FakeContext
 import com.aliothmoon.maameow.third.Ln
 import com.aliothmoon.maameow.third.wrappers.ServiceManager
 
+@SuppressLint("BlockedPrivateApi")
 object ActivityUtils {
+
+    // android.app.WindowConfiguration.WINDOWING_MODE_FULLSCREEN
+    private const val WINDOWING_MODE_FULLSCREEN = 1
+
+    private val setLaunchWindowingMode by lazy {
+        runCatching {
+            ActivityOptions::class.java
+                .getDeclaredMethod("setLaunchWindowingMode", Int::class.javaPrimitiveType)
+                .also { it.isAccessible = true }
+        }.onFailure { Ln.w("setLaunchWindowingMode: reflection failed", it) }.getOrNull()
+    }
+
     /**
      * 以 shell 身份启动指定 Intent 的 Activity，绕过 BAL 限制。
      */
@@ -20,6 +34,11 @@ object ActivityUtils {
             val launchOptions = ActivityOptions.makeBasic()
             if (displayId != 0) {
                 launchOptions.setLaunchDisplayId(displayId)
+                runCatching {
+                    setLaunchWindowingMode?.invoke(launchOptions, WINDOWING_MODE_FULLSCREEN)
+                }.onFailure {
+                    Ln.e("invoke setLaunchWindowingMode failed", it)
+                }
             }
             val ret = try {
                 am.startActivity(intent, launchOptions.toBundle())
@@ -84,7 +103,7 @@ object ActivityUtils {
             @Suppress("DEPRECATION")
             am.getRunningTasks(100).any { task ->
                 task.topActivity?.packageName == packageName
-                    && getTaskDisplayId(task) == targetDisplayId
+                        && getTaskDisplayId(task) == targetDisplayId
             }
         }.getOrDefault(true)
     }
