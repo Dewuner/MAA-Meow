@@ -175,6 +175,7 @@
     <string name="panel_config_name_empty">Name cannot be empty</string>
     <string name="panel_config_name_too_long">Name must be at most 20 characters</string>
     <string name="panel_config_delete_task">Delete Task</string>
+    <string name="panel_config_duplicate_task">Duplicate Task</string>
 
     <!-- panel: profile management -->
     <string name="panel_new_profile">New Profile</string>
@@ -837,6 +838,12 @@
     <string name="panel_recruit_force_refresh">Continue trying to refresh Tags without recruitment permit</string>
     <string name="panel_recruit_not_choose_level1">Keep 1★ tag and skip this slot</string>
     <string name="panel_recruit_not_choose_level1_tip">If enabled, when a 1★ tag is detected, skip this recruitment slot (keep default 9h); if disabled, the 1★ tag will be ignored</string>
+    <string name="panel_recruit_preserve_tag_enabled">Preserve Specific Tags</string>
+    <string name="panel_recruit_preserve_tag_enabled_tip">Tags in the list will not be selected during recruitment. "Support Machine" is preserved by default to avoid interfering with high-rarity tag combinations. When enabled, uses preserve_tags instead of "skip 1★"</string>
+    <string name="panel_recruit_preserve_tag_list_title">Preserved Tag List</string>
+    <string name="panel_recruit_preserve_tag_add_hint">Add tag…</string>
+    <string name="panel_recruit_preserve_tag_add">Add</string>
+    <string name="panel_recruit_preserve_tag_empty_hint">List is empty, all tags will be selected normally</string>
     <string name="panel_recruit_choose_level3">Auto-confirm 3★</string>
     <string name="panel_recruit_choose_level4">Auto-confirm 4★</string>
     <string name="panel_recruit_choose_level5">Auto-confirm 5★</string>
