@@ -538,11 +538,13 @@ private fun SettingClickItem(
                 style = MaterialTheme.typography.bodyLarge,
                 color = contentColor
             )
-            Text(
-                text = description,
-                style = MaterialTheme.typography.bodySmall,
-                color = contentColor.copy(alpha = 0.7f)
-            )
+            if (description.isNotEmpty()) {
+                Text(
+                    text = description,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = contentColor.copy(alpha = 0.7f)
+                )
+            }
         }
     }
 }
