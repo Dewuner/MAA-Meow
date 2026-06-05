@@ -1056,7 +1056,7 @@
     <string name="panel_roguelike_squad_splendid_blossoms">花团锦簇分队</string>
     <string name="panel_roguelike_squad_risky_gambit">棋行险着分队</string>
     <string name="panel_roguelike_squad_echo_of_ages">岁影回音分队</string>
-    <string name="panel_roguelike_squad_agent">代理人分队</string>
+    <string name="panel_roguelike_squad_agent">代理人分队（不支持）</string>
     <string name="panel_roguelike_squad_scholarly">知学分队</string>
     <string name="panel_roguelike_squad_merchant">商贾分队</string>
 

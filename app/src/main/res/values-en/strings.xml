@@ -1005,7 +1005,7 @@
     <string name="panel_roguelike_squad_splendid_blossoms">Splendid Blossoms Squad</string>
     <string name="panel_roguelike_squad_risky_gambit">Risky Gambit Squad</string>
     <string name="panel_roguelike_squad_echo_of_ages">Echo of Ages Squad</string>
-    <string name="panel_roguelike_squad_agent">Agent Squad</string>
+    <string name="panel_roguelike_squad_agent">Agent Squad (Not Supported)</string>
     <string name="panel_roguelike_squad_scholarly">Scholarly Squad</string>
     <string name="panel_roguelike_squad_merchant">Merchant Squad</string>
     <!-- i18n: shared helpers -->
