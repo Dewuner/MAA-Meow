@@ -18,10 +18,6 @@ object ActivityUtils {
     @Volatile
     var forceFullscreenOnVirtualDisplay: Boolean = false
 
-    @JvmField
-    @Volatile
-    var excludeFromRecentsOnBackground: Boolean = false
-
     private val setLaunchWindowingMode by lazy {
         runCatching {
             ActivityOptions::class.java
@@ -87,7 +83,7 @@ object ActivityUtils {
 
         var flag = Intent.FLAG_ACTIVITY_NEW_TASK
         if (excludeFromRecents) {
-            flag = flag or Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS or Intent.FLAG_ACTIVITY_MULTIPLE_TASK
+            flag = flag or Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS
         }
         intent.addFlags(flag)
 

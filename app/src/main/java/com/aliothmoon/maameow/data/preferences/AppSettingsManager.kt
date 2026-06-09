@@ -458,21 +458,6 @@ class AppSettingsManager(private val context: Context) {
         }
     }
 
-    // 后台模式启动游戏时不在最近任务列表显示
-    val excludeFromRecentsOnBackground: StateFlow<Boolean> = settings
-        .map { it.excludeFromRecentsOnBackground.toBooleanStrictOrNull() ?: false }
-        .distinctUntilChanged()
-        .stateIn(
-            scope, SharingStarted.Eagerly,
-            initialSettings.excludeFromRecentsOnBackground.toBooleanStrictOrNull() ?: false
-        )
-
-    suspend fun setExcludeFromRecentsOnBackground(enabled: Boolean) {
-        with(AppSettingsSchema) {
-            context.dataStore.edit { it[excludeFromRecentsOnBackground] = enabled.toString() }
-        }
-    }
-
     // 允许在前台模式执行定时任务
     val allowForegroundScheduledTask: StateFlow<Boolean> = settings
         .map { it.allowForegroundScheduledTask.toBooleanStrictOrNull() ?: false }
