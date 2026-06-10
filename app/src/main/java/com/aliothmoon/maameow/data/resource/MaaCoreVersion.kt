@@ -5,29 +5,27 @@ import com.aliothmoon.maameow.BuildConfig.MAA_CORE_VERSION
 
 object MaaCoreVersion {
 
-    /**
-     * 是否为调试版本，当前先都跳过检查，未遇到不支持的实现
-     * TODO 移除调试版本跳过检查的逻辑
-     */
-    private const val IS_DEBUG_VERSION = true
-
+    /** 当前 MAA Core 版本（构建期由 .maaversion 写入，未部署时为空串） */
+    val current: String get() = MAA_CORE_VERSION
 
     /**
      * 检查当前版本是否满足最低要求
      * @param minimumRequired 最低要求版本（如 "v6.0.0-beta.1"）
+     * @param current 当前 MAA Core 版本，默认取构建期写入的 BuildConfig.MAA_CORE_VERSION
      * @return true 表示满足要求，false 表示版本过低
      */
-    fun meetsMinimumRequired(minimumRequired: String?): Boolean {
-        // 调试版本跳过检查
-        if (IS_DEBUG_VERSION) return true
-
+    fun meetsMinimumRequired(
+        minimumRequired: String?,
+        current: String = MAA_CORE_VERSION
+    ): Boolean {
         // 无版本要求
         if (minimumRequired.isNullOrBlank()) return true
 
+        // 当前版本未知（未经 setup_maa_core.py 部署），宽松放行
+        if (current.isBlank()) return true
+
         return runCatching {
-            val current = parseVersion(MAA_CORE_VERSION)
-            val required = parseVersion(minimumRequired)
-            compareVersions(current, required) >= 0
+            compareVersions(parseVersion(current), parseVersion(minimumRequired)) >= 0
         }.getOrDefault(true)
     }
 
@@ -66,8 +64,29 @@ object MaaCoreVersion {
             a.preRelease == null && b.preRelease == null -> 0
             a.preRelease == null -> 1  // a 是正式版，b 是预发布
             b.preRelease == null -> -1 // a 是预发布，b 是正式版
-            else -> a.preRelease.compareTo(b.preRelease)
+            else -> comparePreRelease(a.preRelease, b.preRelease)
         }
+    }
+
+    /**
+     * 按 SemVer 规则比较预发布标签：以 "." 分段，数字段按数值比较（beta.2 < beta.10），
+     * 非数字段按字典序，数字段 < 非数字段，前缀相同时段数少者小
+     */
+    private fun comparePreRelease(a: String, b: String): Int {
+        val aParts = a.split(".")
+        val bParts = b.split(".")
+        for (i in 0 until minOf(aParts.size, bParts.size)) {
+            val aNum = aParts[i].toIntOrNull()
+            val bNum = bParts[i].toIntOrNull()
+            val cmp = when {
+                aNum != null && bNum != null -> aNum.compareTo(bNum)
+                aNum != null -> -1
+                bNum != null -> 1
+                else -> aParts[i].compareTo(bParts[i])
+            }
+            if (cmp != 0) return cmp
+        }
+        return aParts.size - bParts.size
     }
 
     private data class VersionInfo(

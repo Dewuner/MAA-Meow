@@ -18,6 +18,7 @@ import argparse
 import io
 import json
 import os
+import re
 import shutil
 import sys
 import tarfile
@@ -50,6 +51,10 @@ IGNORE_EXTENSIONS = {".h"}
 ASSETS_RESOURCE_DIR = "app/src/main/assets/MaaSync/MaaResource"
 JNILIBS_DIR = "app/src/main/jniLibs"
 CACHE_DIR = ".maa-cache"
+VERSION_FILE = ".maaversion"
+
+# Extract version from tarball name, e.g. MAAComponent-v6.12.0-beta.2-android-arm64.tar.gz
+TARBALL_VERSION_RE = re.compile(r"-(v\d+\.\d+\.\d+(?:-[A-Za-z0-9.]+)?)-android-")
 
 
 def get_project_root() -> Path:
@@ -213,6 +218,12 @@ def extract_and_deploy(tarball: Path, abi: str, project_root: Path):
     return stats
 
 
+def write_version_file(version: str, project_root: Path):
+    version_file = project_root / VERSION_FILE
+    version_file.write_text(version + "\n", encoding="utf-8")
+    print(f"  [VERSION] {VERSION_FILE}: {version}")
+
+
 def main():
     parser = argparse.ArgumentParser(description="Download and deploy prebuilt MAA Core artifacts")
     parser.add_argument("--repo", "-r", default=DEFAULT_GITHUB_REPO,
@@ -272,15 +283,25 @@ def main():
     # Deploy
     print(f"\n[DEPLOY] Deploying artifacts...")
     resource_deployed = False
+    deployed_version = None
     for tarball in sorted(cache_dir.glob("*.tar.gz")):
         for keyword, abi in ABI_MAP.items():
             if keyword in tarball.name and abi in target_abis:
                 extract_and_deploy(tarball, abi, project_root)
                 resource_deployed = True
+                m = TARBALL_VERSION_RE.search(tarball.name)
+                if m:
+                    deployed_version = m.group(1)
 
     if not resource_deployed:
         print("[ERROR] No tar.gz files found in cache. Run without --skip-download first.")
         sys.exit(1)
+
+    # Record deployed MAA Core version for the Gradle build (BuildConfig.MAA_CORE_VERSION)
+    if deployed_version:
+        write_version_file(deployed_version, project_root)
+    else:
+        print(f"[WARN] Could not parse version from tarball name, {VERSION_FILE} not updated")
 
     # Summary
     print("\n" + "=" * 55)

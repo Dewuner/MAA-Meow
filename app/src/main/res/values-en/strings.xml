@@ -776,7 +776,7 @@
 
     <!-- mini game: data texts (names / tips, mirrors MaaWpfGui localization keys) -->
     <string name="mini_game_empty_tip">Select a mini-game from above to start running.</string>
-    <string name="mini_game_low_version_tip">Old Version, Update required\nMinimum Requirements: %1$s</string>
+    <string name="mini_game_low_version_tip">MaaCore version too old, update required\nCurrent MaaCore Version: %2$s\nMinimum Requirements: %1$s</string>
     <string name="mini_game_sf_event_none">None</string>
     <string name="mini_game_sf_event_support_platform">Support Platform</string>
     <string name="mini_game_sf_event_knight_errant">Knight-errant</string>

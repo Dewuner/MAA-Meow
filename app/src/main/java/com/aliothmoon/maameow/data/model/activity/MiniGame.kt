@@ -44,7 +44,7 @@ data class MiniGame(
             val tip: UiText
             val tipKey: String?
             if (unsupported) {
-                tip = uiTextOf(R.string.mini_game_low_version_tip, minReq)
+                tip = uiTextOf(R.string.mini_game_low_version_tip, minReq, MaaCoreVersion.current)
                 tipKey = null
             } else {
                 tip = MiniGameTextRegistry.resolveTip(

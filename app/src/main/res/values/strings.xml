@@ -827,7 +827,7 @@
 
     <!-- mini game: data texts (names / tips, mirrors MaaWpfGui localization keys) -->
     <string name="mini_game_empty_tip">在上方选择小游戏以开始运行。</string>
-    <string name="mini_game_low_version_tip">版本过低\n最低要求: %1$s</string>
+    <string name="mini_game_low_version_tip">MaaCore 版本过低\n当前版本: %2$s\n最低要求: %1$s</string>
     <string name="mini_game_sf_event_none">不选择</string>
     <string name="mini_game_sf_event_support_platform">支援作战平台</string>
     <string name="mini_game_sf_event_knight_errant">游侠</string>

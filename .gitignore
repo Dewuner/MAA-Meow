@@ -35,6 +35,8 @@ android/.cxx
 
 # MAA Core download cache
 .maa-cache/
+# MAA Core deployed version (written by scripts/setup_maa_core.py)
+.maaversion
 
 # App Build
 /app/release

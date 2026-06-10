@@ -52,8 +52,10 @@ android {
         ndkVersion = "29.0.13113456"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-        // TODO 先写死
-        buildConfigField("String", "MAA_CORE_VERSION", """"v6.0.0"""")
+        // setup_maa_core.py deploy 时写入 .maaversion；缺失时为空串，运行时检查宽松放行
+        val maaCoreVersion = rootProject.file(".maaversion")
+            .takeIf { it.isFile }?.readText()?.trim().orEmpty()
+        buildConfigField("String", "MAA_CORE_VERSION", "\"$maaCoreVersion\"")
 
         ndk {
             abiFilters += listOf("arm64-v8a", "x86_64")
